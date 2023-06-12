@@ -1,23 +1,3 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-
 
 #include "main.h"
 #include "math.h"
@@ -25,7 +5,6 @@
 
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c2;
-
 
 
 void SystemClock_Config(void);
@@ -36,7 +15,6 @@ uint32_t u32Count = 0U;
 
 
 #define MPU6050_ADDR 0xD0
-
 
 #define SMPLRT_DIV_REG 0x19
 #define GYRO_CONFIG_REG 0x1B
@@ -57,19 +35,14 @@ int16_t Accel_X_RAW = 0;
 int16_t Accel_Y_RAW = 0;
 int16_t Accel_Z_RAW = 0;
 
-int16_t Gyro_X_RAW = 0;
-int16_t Gyro_Y_RAW = 0;
-int16_t Gyro_Z_RAW = 0;
 
-float Ax, Ay, Az, Gx, Gy, Gz;
-
+float Ax, Ay, Az;
 
 void MPU6050_Init (void)
 {
 	uint8_t check;
 	uint8_t Data;
 
-	
 
 	HAL_I2C_Mem_Read (&hi2c1, MPU6050_ADDR,WHO_AM_I_REG,1, &check, 1, 1000);
 
@@ -109,34 +82,10 @@ void MPU6050_Read_Accel (void)
 	Accel_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data [3]);
 	Accel_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data [5]);
 
-
 	Ax = Accel_X_RAW/16384.0;
 	Ay = Accel_Y_RAW/16384.0;
 	Az = Accel_Z_RAW/16384.0;
 }
-
-
-void MPU6050_Read_Gyro (void)
-{
-	uint8_t Rec_Data[6];
-
-	// Read 6 BYTES of data starting from GYRO_XOUT_H register
-
-	HAL_I2C_Mem_Read (&hi2c1, MPU6050_ADDR, GYRO_XOUT_H_REG, 1, Rec_Data, 6, 1000);
-
-	Gyro_X_RAW = (int16_t)(Rec_Data[0] << 8 | Rec_Data [1]);
-	Gyro_Y_RAW = (int16_t)(Rec_Data[2] << 8 | Rec_Data [3]);
-	Gyro_Z_RAW = (int16_t)(Rec_Data[4] << 8 | Rec_Data [5]);
-
-	
-
-	Gx = Gyro_X_RAW/131.0;
-	Gy = Gyro_Y_RAW/131.0;
-	Gz = Gyro_Z_RAW/131.0;
-}
-
-
-
 
 
 /**
@@ -146,25 +95,21 @@ void MPU6050_Read_Gyro (void)
 int main(void)
 {
  
-  
 	char buf[4];
-
   HAL_Init();
 
   SystemClock_Config();
  
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
   
-
   lcd_init();
 
   MPU6050_Init();
 
   lcd_send_string ("initialized");
 
-  HAL_Delay (100);  
+  HAL_Delay (200);  
 
   lcd_clear ();
 	
@@ -176,21 +121,17 @@ float totalvector;
 
 float Steps = 0;
 
-
-//int prevState = 0;
   while (1)
   {
    
-		
 			if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port,BUTTON_Pin) == 0 )
 			{
 						
-			
 				HAL_Delay(2);
 				if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port,BUTTON_Pin) == 0) {
 				while(HAL_GPIO_ReadPin(BUTTON_GPIO_Port,BUTTON_Pin) == 0 ) {}
-				
 					u32Count++;
+					
 				if( u32Count %2 == 0 )
 				{
 										
@@ -198,7 +139,6 @@ float Steps = 0;
 						{
 							
 							MPU6050_Read_Accel();
-							//MPU6050_Read_Gyro();
 
 							vector = sqrt( (Ax * Ax) + (Ay * Ay) + (Az * Az) );
 		
@@ -212,7 +152,7 @@ float Steps = 0;
 							lcd_send_string ("walkie=");
 							sprintf(buf,"%.0f",Steps);
 							lcd_send_string(buf);
-						
+											
 							lcd_send_cmd (0x80|0x40);
 							lcd_send_string ("status=active");
 												
@@ -226,6 +166,7 @@ float Steps = 0;
 				{
 				lcd_send_cmd (0x80|0x40);
 							lcd_send_string ("status=paused");
+					
 				}
 
 }
@@ -269,21 +210,11 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
+
 static void MX_I2C1_Init(void)
 {
 
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
+  
   hi2c1.Instance = I2C1;
   hi2c1.Init.ClockSpeed = 100000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -297,23 +228,13 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
 
 }
 
-/**
-  * @brief I2C2 Initialization Function
-  * @param None
-  * @retval None
-  */
 
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -342,19 +263,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
 	
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-	
-/* USER CODE END MX_GPIO_Init_2 */
+
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
 void Error_Handler(void)
 {
 }
