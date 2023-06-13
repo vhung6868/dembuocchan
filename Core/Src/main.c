@@ -215,6 +215,7 @@ float Steps = 0;
 
   while (1)
   {
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
 			HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin,1);
 			if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port,BUTTON_Pin) == 0 )
 			{
@@ -234,7 +235,7 @@ float Steps = 0;
 
 							vector = sqrt( (Ax * Ax) + (Ay * Ay) + (Az * Az) );
 		
-							if (totalvector > 1.1){
+							if (totalvector > 1.08){
 
 			Steps=Steps+1;
 			vector = vectorprevious;
@@ -248,7 +249,7 @@ float Steps = 0;
 							lcd_send_cmd (0x80|0x40);
 							lcd_send_string ("status=active");
 												
-						HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin,status);
+						HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 						HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin,0);
 											
 							HAL_Delay(200);
@@ -263,10 +264,10 @@ float Steps = 0;
 					
 				}
 
-}
-}
+			}
+		}
 	
-}
+	}
   
 }
 

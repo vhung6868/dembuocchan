@@ -29,16 +29,18 @@ Project File Date:  05/18/2023
 Build target 'lcd_i2c_stm32f103c8'
 compiling main.c...
 ../Core/Src/main.c(218): warning:  #188-D: enumerated type mixed with another type
+  			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,1);
+../Core/Src/main.c(219): warning:  #188-D: enumerated type mixed with another type
   			HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin,1);
-../Core/Src/main.c(245): warning:  #223-D: function "sprintf" declared implicitly
+../Core/Src/main.c(246): warning:  #223-D: function "sprintf" declared implicitly
   							sprintf(buf,"%.0f",Steps);
-../Core/Src/main.c(252): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/main.c(253): warning:  #188-D: enumerated type mixed with another type
   						HAL_GPIO_WritePin(LED_GPIO_Port,LED_Pin,0);
-../Core/Src/main.c: 3 warnings, 0 errors
+../Core/Src/main.c: 4 warnings, 0 errors
 linking...
-Program Size: Code=10740 RO-data=292 RW-data=44 ZI-data=1108  
+Program Size: Code=10748 RO-data=292 RW-data=44 ZI-data=1108  
 FromELF: creating hex file...
-"lcd_i2c_stm32f103c8\lcd_i2c_stm32f103c8.axf" - 0 Error(s), 3 Warning(s).
+"lcd_i2c_stm32f103c8\lcd_i2c_stm32f103c8.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
